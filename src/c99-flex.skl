@@ -31,7 +31,6 @@ m4_define([[M4_PROPERTY_BACKEND_NAME]], [[C99]])
 m4_define([[M4_PROPERTY_SOURCE_SUFFIX]], [[.c]])
 m4_define([[M4_PROPERTY_TRACE_LINE_REGEXP]], [[^#line ([0-9]+) "(.*)"]])
 m4_define([[M4_PROPERTY_TRACE_LINE_TEMPLATE]], [[#line %d "%s"]])
-m4_define([[M4_PROPERTY_CONTEXT_ARG]], [[yyscanner]])
 
 %# Macro hooks used by Flex code generators start here
 m4_define([[M4_HOOK_INT32]], [[int32_t]])
@@ -79,6 +78,7 @@ m4_define([[M4_HOOK_STATE_CASE_BREAK]], [[/*LINTED*/break;]])
 m4_define([[M4_HOOK_SET_POSTACTION]], [[m4_define([[M4_HOOK_STATE_CASE_BREAK]], [[$1]])]])
 m4_define([[M4_HOOK_FATAL_ERROR]], [[yypanic($1, yyscanner);]])
 m4_define([[M4_HOOK_ECHO]], [[yyecho(yyscanner);]])
+m4_define([[M4_HOOK_CONTEXT_CALL]], [[$1($2, yyscanner)]])
 
 m4_define([[yyterminate]], m4_ifdef([[M4_MODE_YYTERMINATE]], [[M4_MODE_YYTERMINATE /* $1 */]], [[return YY_NULL /* $1 */]]))
 

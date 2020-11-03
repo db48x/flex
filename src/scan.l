@@ -1083,23 +1083,15 @@ void set_input_file( char *file )
 	}
 
 void context_call(char *txt) {
-	const char *context_arg = skel_property("M4_PROPERTY_CONTEXT_ARG");
+	char buf[BUFSIZ];
 
-	/* if there's no such property, simply pass through */
-	if (context_arg == NULL) {
-		add_action(txt);
-	} else {
-		char buf[BUFSIZ];
-
-		/* otherwise, supply the context string as a final argument */
-		assert(txt[strlen(txt)-1] == ')');
-		strncpy(buf, txt, sizeof(buf));
-		buf[strlen(buf)-1] = '\0';	/* remove trailing ) */
-		add_action(buf);
-		if (txt[strlen(buf)-1] != '(') {
-			add_action(", ");
-		}
-		add_action(context_arg);
-		add_action(")");
-	}
+	char *fn = txt;
+	char *args = index(txt, '(');
+	assert(args);
+	*args = '\0';	/* remove leading ( */
+	args += 1;
+	assert(args[strlen(args)-1] == ')');
+	args[strlen(args)-1] = '\0';	/* remove trailing ) */
+	sprintf(buf, "M4_HOOK_CONTEXT_CALL([[%s]],[[%s]])\0", fn, args);
+	add_action(buf);
 }

@@ -75,6 +75,7 @@ m4_define([[M4_HOOK_STATE_CASE_BREAK]], [[/*LINTED*/break;]])
 m4_define([[M4_HOOK_SET_POSTACTION]], [[m4_define([[M4_HOOK_STATE_CASE_BREAK]], [[$1]])]])
 m4_define([[M4_HOOK_FATAL_ERROR]], [[yypanic($1 M4_YY_CALL_LAST_ARG);]])
 m4_define([[M4_HOOK_ECHO]], [[yyecho();]])
+m4_define([[M4_HOOK_CONTEXT_CALL]], [[$1($2)]])
 
 m4_ifdef([[M4_MODE_YYTERMINATE]], [[m4_define([[yyterminate]], [[M4_MODE_YYTERMINATE]])]])
 
