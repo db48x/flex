@@ -8,7 +8,7 @@
 #
 # To add a new back end named "foo", append "|foo" to the
 # string literal below.
-backends="c99"
+backends="c99|rust"
 
 if [ "$1" = -d ] ; then
     shift
@@ -44,6 +44,7 @@ for part in "$@"; do
         nr) backend=nr; ;;
         r) backend=r; options="${options} reentrant";;
         ${backends}) backend=${part}; options="${options} emit=\"${part}\"" ;;
+        c99|rust) backend=${part}; options="${options} emit=\"${part}\"" ;;
         ser) serialization=yes ;;
         ver) serialization=yes; verification=yes; options="${options} tables-verify" ;;
 	Ca) options="${options} align" ;;

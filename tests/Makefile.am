@@ -326,9 +326,6 @@ TESTOPTS = -L
 
 FLEX = $(top_builddir)/src/flex
 
-.l.c: $(FLEX)
-	$(AM_V_LEX)$(FLEX) $(TESTOPTS) -o $@ $<
-
 .ll.cc: $(FLEX)
 	$(AM_V_LEX)$(FLEX) $(TESTOPTS) -+ -o $@ $<
 
@@ -404,5 +401,3 @@ $(srcdir)/ruleset.am: $(srcdir)/ruleset.sh
 	$(SHELL) $(srcdir)/ruleset.sh nr r c99 > $(srcdir)/ruleset.am
 
 include $(srcdir)/ruleset.am
-
-

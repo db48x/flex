@@ -21,6 +21,11 @@ compatible() {
 }
 
 for backend in "$@" ; do
+    case $backend in
+	nr|r|c99) ext="c" ;;
+	rust) ext="rs" ;;
+	*) ext=${backend} ;;
+    esac
     for ruleset in *.rules; do
 	if compatible "${backend}" "${ruleset}" ; then
 	    testname="${ruleset%.*}_${backend}"
@@ -30,7 +35,7 @@ for backend in "$@" ; do
 	    # shellcheck disable=2016
 	    printf '\t$(SHELL) $(srcdir)/testmaker.sh $@\n\n'
 	    RULESET_TESTS="${RULESET_TESTS} ${testname}"
-	    RULESET_REMOVABLES="${RULESET_REMOVABLES} ${testname} ${testname}.c ${testname}.l ${testname}.txt"
+	    RULESET_REMOVABLES="${RULESET_REMOVABLES} ${testname} ${testname}.${ext} ${testname}.l ${testname}.txt"
 	fi
     done
     for kind in opt ser ver ; do
@@ -38,11 +43,11 @@ for backend in "$@" ; do
             bare_opt=${opt#-}
             # The filenames must work on case-insensitive filesystems.
             bare_opt=$(echo ${bare_opt}| sed 's/F$/xF/')
-            testname=tableopts_${kind}_${backend}-${bare_opt}.${kind}
+            testname=tableopts_${kind}-${bare_opt}.${kind}_${backend}
             RULESET_TESTS="${RULESET_TESTS} ${testname}"
-            RULESET_REMOVABLES="${RULESET_REMOVABLES} ${testname} ${testname}.c ${testname}.l ${testname}.tables"
+            RULESET_REMOVABLES="${RULESET_REMOVABLES} ${testname} ${testname}.${ext} ${testname}.l ${testname}.tables"
             cat << EOF
-tableopts_${kind}_${backend}_${bare_opt}_${kind}_SOURCES = ${testname}.l
+tableopts_${kind}_${bare_opt}_${kind}_${backend}_SOURCES = ${testname}.l
 ${testname}.l: \$(srcdir)/tableopts.rules \$(srcdir)/testmaker.sh \$(srcdir)/testmaker.m4
 	\$(SHELL) \$(srcdir)/testmaker.sh \$@
 
@@ -56,6 +61,7 @@ done
 for backend in "$@" ; do
     case $backend in
 	nr|r|c99) ext="c" ;;
+	rust) ext="rs" ;;
 	*) ext=${backend} ;;
     esac
     # shellcheck disable=SC2059
@@ -70,6 +76,9 @@ for backend in "$@" ; do
     printf "\tchmod a+x test-yydecl-${backend}.sh\$(EXEEXT)\n"
     echo ""
 
+    # shellcheck disable=SC2016
+    printf '%%_%s.%s: %%_%s.l $(FLEX)\n\t$(AM_V_LEX)$(FLEX) $(TESTOPTS) -o $@ $<\n\n' "${backend}" "${ext}" "${backend}"
+
     RULESET_TESTS="${RULESET_TESTS} test-yydecl-${backend}.sh"
     RULESET_REMOVABLES="${RULESET_REMOVABLES} test-yydecl-${backend}.sh"
 done
@@ -80,5 +89,3 @@ printf "# End generated test rules\n"
 echo RULESET_TESTS = "${RULESET_TESTS}"
 echo RULESET_REMOVABLES = "${RULESET_REMOVABLES}"
 echo
-
-
